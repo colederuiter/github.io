@@ -11,6 +11,7 @@
             location.href="about.html";
         })
 
+        // Get the html main tag
         let MainContent = document.getElementsByTagName("main")[0];
         let MainParagraph = document.createElement("p");
 
@@ -21,7 +22,7 @@
         MainContent.appendChild(MainParagraph);
 
         let FirstString = "This is";
-        // "string literal"
+        // string literal
         // ${} gets replaced by the string variable inside of it
         let SecondString = `${FirstString} my second string`;
         MainParagraph.textContent = SecondString;
