@@ -1,0 +1,22 @@
+{
+  "users" : [
+    {
+      "DisplayName" : "Cole de Ruiter",
+      "EmailAddress" : "cole.deruiter@dcmail.ca",
+      "Username" : "cole123",
+      "Password" : "password123"
+    },
+    {
+      "DisplayName" : "Samwise Gamgee",
+      "EmailAddress" : "samwisegamgee@durhamcollege.ca",
+      "Username" : "sgamgee",
+      "Password" : "123Password"
+    },
+    {
+      "DisplayName" : "admin",
+      "EmailAddress" : "admin@durhamcollege.ca",
+      "Username" : "admin",
+      "Password" : "password"
+    }
+  ]
+}

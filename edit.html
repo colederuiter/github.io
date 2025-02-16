@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Contacts</title>
+    <title>Edit Contact</title>
 
     <!-- Css Selection -->
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -17,9 +17,8 @@
 <header></header>
 
 <main class="container">
-    <h1>Contact Us</h1>
+    <h1>Edit Contact</h1>
     <form class="col-lg-6 col-md-10 col-sm-12 mb-4">
-
         <div class="input-group mb-3">
             <label for="fullName" class="input-group-text">Full Name</label>
             <input id="fullName" name="fullName" type="text" class="form-control"
@@ -41,24 +40,9 @@
             <span id="emailAddress-error" class="text-danger"></span>
         </div>
 
-        <div class="input-group mb-3">
-            <span class="input-group-text">Message</span>
-            <input id="message" name="message" class="form-control"
-                   aria-describedby="Message Area" aria-label="Message Area">
-        </div>
-
-        <div class="mb-3 form-check">
-            <input id="subscribeCheckBox" name="subscribeCheckBox" type="checkbox" class="form-check-input">
-            <label class="form-check-label" for="subscribeCheckBox">Subscribe to our Contact List</label>
-        </div>
-
-        <button id="sendButton" name="sendButton" type="submit" class="btn btn-primary"><i class="fa-solid fa-envelope"></i> Submit</button>
+        <button id="editButton" name="editButton" type="submit" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
         <button id="cancelButton" name="cancelButton" type="reset" class="btn btn-warning"><i class="fa-solid fa-ban"></i> Cancel</button>
     </form>
-
-    <div class="col-lg-6 col-md-4">
-        <a href="contact-list.html" class="btn btn-outline-primary mt-4"><i class="fa-solid fa-book-open"></i> Show Contact List</a>
-    </div>
 </main>
 
 <!-- Scripting Section -->
