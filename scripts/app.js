@@ -1,67 +1,49 @@
 "use strict";
 
-//IIFE - Immediately Invoke Functional Expression
+import {LoadHeader} from "./header.js";
+import {Router} from "./router.js";
+import {LoadFooter} from "./footer.js";
+import {AuthGuard} from "./authguard.js";
+
+const pageTitles = {
+    "/": "Home",
+    "/home": "Home",
+    "/about": "About us",
+    "/contact-list": "Contact List",
+    "/contacts": "Contacts",
+    "/edit": "Edit Contact",
+    "/login": "Login",
+    "/products": "Products",
+    "/register": "Register",
+    "/services": "Services",
+    "/404": "404"
+};
+
+const routes = {
+    "/": "views/pages/home.html",
+    "/home": "views/pages/home.html",
+    "/about": "views/pages/about.html",
+    "/contact-list": "views/pages/contact-list.html",
+    "/contacts": "views/pages/contacts.html",
+    "/edit": "views/pages/edit.html",
+    "/login": "views/pages/login.html",
+    "/products": "views/pages/products.html",
+    "/register": "views/pages/register.html",
+    "/services": "views/pages/services.html",
+    "/404": "views/pages/404.html"
+};
+
+const router = new Router(routes);
+
 (function () {
-
-    function CheckLogin(){
-        console.log("[INFO] Checking user login status")
-
-        const loginNav = document.getElementById("login");
-
-        if(!loginNav){
-            console.warn("[WARN] loginNav element no found. Skipping CheckLogin().")
-            return;
-        }
-
-        const userSession = sessionStorage.getItem("user")
-        if(userSession){
-
-            loginNav.innerHTML = `<i class="fas fa-sign"></i> Logout`
-            loginNav.href = "#";
-
-            loginNav.addEventListener("click", (event) => {
-                event.preventDefault();
-                sessionStorage.removeItem("user");
-                location.href = "login.html";
-            })
-        }
-    }
-
-    function updateActiveNavLink(){
-        console.log("[INFO] updateActiveNavLink called...");
-
-        const currentPage = document.title.trim();
-        const navLinks = document.querySelectorAll('nav a');
-        navLinks.forEach(link => {
-           if(link.textContent.trim() === currentPage){
-               link.classList.add('active');
-
-           } else {
-               link.classList.remove('active');
-           }
-        });
-    }
-
-    /**
-     * Loads the navbar into the current page
-     * @returns {Promise<void>}
-     */
-    async function LoadHeader(){
-        console.log("[INFO] LoadHeader called...");
-
-            return fetch("header.html")
-                .then(response => response.text())
-                .then(data => {
-                    document.querySelector("header").innerHTML = data;
-                    updateActiveNavLink();
-                })
-                .catch(error => {
-                    console.error("[ERROR] Unable to load header");
-                })
-    }
 
     function DisplayLoginPage(){
         console.log("[INFO] DisplayLoginPage called...");
+
+        if (sessionStorage.getItem("user")) {
+            router.navigate("/contact-list");
+            return;
+        }
 
         const messageArea = document.getElementById("messageArea");
         const loginButton = document.getElementById("loginButton");
@@ -118,7 +100,10 @@
 
                     messageArea.style.display = "none";
                     messageArea.classList.remove("alert", "alert-danger")
-                    location.href = "contact-list.html";
+
+                    LoadHeader().then(() => {
+                        router.navigate("/contact-list");
+                    })
                 } else {
                     messageArea.style.display = "block";
                     messageArea.classList.add("alert", "alert-danger")
@@ -135,8 +120,8 @@
 
         cancelButton.addEventListener("click", (event) => {
             document.getElementById("loginForm").reset();
-            location.href = "index.html";
-        })
+            router.navigate("/");
+        });
     }
 
     function DisplayRegisterPage(){
@@ -147,7 +132,7 @@
      * Redirects user back to the contact-list page
      */
     function handleCancelClick() {
-        location.href = "contact-list.html";
+        router.navigate("/contact-list");
     }
 
     /**
@@ -178,7 +163,7 @@
         localStorage.setItem(page, contact.serialize());
 
         //redirect upon success
-        location.href="contact-list.html";
+        router.navigate("/contact-list");
     }
 
     /**
@@ -202,7 +187,7 @@
         AddContact(fullName, contactNumber, emailAddress);
 
         // redirection
-        location.href = "contact-list.html";
+        router.navigate("/contact-list");
     }
 
     /**
@@ -212,8 +197,8 @@
     function validateForm() {
         return(
             validateInput("fullName") &&
-                validateInput("contactNumber") &&
-                    validateInput("emailAddress")
+            validateInput("contactNumber") &&
+            validateInput("emailAddress")
         );
     }
 
@@ -331,14 +316,14 @@
             }
 
             //redirection
-            location.href = "contact-list.html"
+            router.navigate("/contact-list");
     }
 
 
     function DisplayEditPage() {
         console.log("Called DisplayEditPage() ...");
 
-        const page = location.hash.substring(1);
+        const page = location.hash.split("#")[2];
         const editButton = document.getElementById("editButton");
 
         addEventListenerOnce("cancelButton", "click", handleCancelClick);
@@ -424,22 +409,11 @@
 
         let aboutUsButton = document.getElementById("AboutUsBtn");
         aboutUsButton.addEventListener("click", () => {
-            location.href="about.html";
+            router.navigate("/about");
         })
 
         DisplayWeather();
 
-        document.querySelector("main").insertAdjacentHTML(
-            "beforeend",
-            `<p id="MainParagraph" class="mt-3">This is my first main paragraph</p>`
-        );
-
-        document.body.insertAdjacentHTML(
-            "beforeend",
-            `<article class="container">
-                  <p id="MainParagraph" class="mt-3">This is my first article paragraph</p>
-                  </article>`
-        );
     }
 
     function DisplayProductsPage(){
@@ -471,6 +445,13 @@
             alert("Form successfully submitted!");
         });
 
+        const contactListButton = document.getElementById("showContactList");
+        if(contactListButton){
+            contactListButton.addEventListener("click", function(event){
+                event.preventDefault();
+                router.navigate("/contact-list");
+            });
+        }
     }
 
     function DisplayContactListPage(){
@@ -521,7 +502,7 @@
 
             const addButton = document.getElementById("addButton");
             addButton.addEventListener("click", () => {
-                location.href="edit.html#add";
+                router.navigate("/edit#add");
             });
 
             const deleteButtons = document.querySelectorAll("button.delete");
@@ -529,9 +510,17 @@
 
                 button.addEventListener("click", function() {
 
+                    const contactKey = this.value;
+                    console.log(`[DEBUG] Deleting contact: ${contactKey}`);
+
+                    if(!contactKey.startsWith("contact_")){
+                        console.error("[ERROR] Invalid contact key format");
+                        return;
+                    }
+
                     if(confirm("Delete contact, please confirm")){
                         localStorage.removeItem(this.value);
-                        location.href="contact-list.html";
+                        DisplayContactListPage();
                     }
                 });
 
@@ -540,56 +529,88 @@
             const editButtons = document.querySelectorAll("button.edit");
             editButtons.forEach((button) => {
                button.addEventListener("click", function() {
-                  location.href="edit.html#" + this.value;
+                   router.navigate(`/edit#${this.value}`);
                });
             });
     }
 
-    async function Start() {
-        console.log("Starting App...");
-        console.log(`Current document title: ${document.title}`);
+    // Listen for route changes update nav links and call the respective Display function
+    document.addEventListener("routeLoaded", (event) => {
+        const newPath = event.detail;
+        console.log(`[INFO] New Route Loaded: ${newPath}`);
 
-        // Load header first then run check login
-        LoadHeader().then(() => {
-            CheckLogin();
+        LoadHeader().then( () => {
+            handlePageLogic(newPath);
         });
+    });
 
-        switch (document.title) {
-            case "Home":
+    window.addEventListener("sessionExpired", (event) => {
+        console.warn("[SESSION] Redirecting the user due to inactivity.");
+        router.navigate("/login");
+    });
+
+    function handlePageLogic(path) {
+
+        document.title = pageTitles[path] || "Untitled Page";
+
+        const protectedRoutes = ['/contact-list', '/edit'];
+        if(protectedRoutes.includes(path)) {
+            AuthGuard();
+        }
+
+        switch (path) {
+            case "/home":
                 DisplayHomePage();
                 break;
-            case "Products":
+            case "/":
+                DisplayHomePage();
+                break;
+            case "/products":
                 DisplayProductsPage();
                 break;
-            case "Services":
+            case "/services":
                 DisplayServicesPage();
                 break;
-            case "About":
+            case "/about":
                 DisplayAboutPage();
                 break;
-            case "Contacts":
+            case "/contacts":
                 attachValidationListeners();
                 DisplayContactsPage();
                 break;
-            case "Contact List":
+            case "/contact-list":
                 DisplayContactListPage();
                 break;
-            case "Edit Contact":
+            case "/edit":
                 attachValidationListeners();
                 DisplayEditPage();
                 break;
-            case "Login":
+            case "/login":
                 DisplayLoginPage();
                 break;
-            case "Register":
+            case "/register":
                 DisplayRegisterPage();
                 break;
             default:
-                console.error("No matching case for page title")
+                console.error(`No matching case for route ${path}`);
         }
     }
+    // This function prints "App Started!" when called
+    async function Start() {
+        console.log("App Starting...");
 
-    window.addEventListener("load", () => {
+        // Load Header first, then run CheckLogin after its injected
+        await LoadHeader();
+        await LoadFooter();
+        AuthGuard();
+
+        const currentPath = location.hash.slice(1) || "/";
+        router.loadRoute(currentPath);
+
+        handlePageLogic(currentPath);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
         console.log("DOM Fully loaded and parsed");
         Start();
     });
